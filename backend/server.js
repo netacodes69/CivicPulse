@@ -13,7 +13,7 @@ const app = express();
 // ===== FIX 1: CORS Proper Setup =====
 const allowedOrigins = [
   "http://localhost:5173",
-  process.env.https://civicpulse.vercel.app  // Vercel URL will go here
+  process.env.FRONTEND_URL  // Vercel URL will go here
 ];
 
 app.use(cors({
