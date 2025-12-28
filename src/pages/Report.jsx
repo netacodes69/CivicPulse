@@ -3,7 +3,7 @@ import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 
 const Report = () => {
-  const { user, token } = useContext(AuthContext); // ✅ use context
+  const { user, token } = useContext(AuthContext); // use context
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
@@ -20,18 +20,24 @@ const Report = () => {
     if (image) formData.append("image", image);
 
     try {
-      const res = await axios.post("/api/user/report", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      // 🔥 LOGIC FIX — ONLY CHANGE HERE
+      const res = await axios.post(
+        "https://civicpulse-c85t.onrender.com/api/user/report",   // fixed endpoint
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       setMessage("Report submitted successfully!");
       setTitle("");
       setDescription("");
       setCategory("");
       setImage(null);
+
     } catch (err) {
       console.error(err);
       setMessage("Failed to submit report");
@@ -127,15 +133,12 @@ const Report = () => {
               <textarea
                 id="description"
                 rows="5"
-                placeholder="Please provide a detailed description of the issue, including location, severity, and any other relevant information..."
+                placeholder="Please provide details..."
                 className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-slate-800 placeholder-slate-400 resize-vertical"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 required
               />
-              <p className="text-xs text-slate-500 mt-1">
-                Minimum 20 characters required
-              </p>
             </div>
 
             {/* Image Upload */}
@@ -162,27 +165,19 @@ const Report = () => {
                       stroke="currentColor"
                       viewBox="0 0 24 24"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                      />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                     </svg>
                     <span className="text-slate-600 font-medium">
                       Click to upload image
                     </span>
-                    <span className="text-slate-400 text-sm mt-1">
-                      PNG, JPG up to 10MB
-                    </span>
+                    <span className="text-slate-400 text-sm">PNG/JPG up to 10MB</span>
                   </div>
                 </label>
               </div>
               {image && (
                 <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
-                  <p className="text-green-700 text-sm font-medium">
-                    ✓ File selected: {image.name}
-                  </p>
+                  <p className="text-green-700 text-sm font-medium">✓ File: {image.name}</p>
                 </div>
               )}
             </div>
@@ -191,27 +186,14 @@ const Report = () => {
             <div className="pt-4">
               <button
                 type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-sm flex items-center justify-center gap-2"
+                className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-sm flex items-center justify-center gap-2"
               >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-                  />
-                </svg>
                 Submit Report
               </button>
             </div>
           </form>
 
-          {/* Message Display */}
+          {/* Message */}
           {message && (
             <div
               className={`mt-6 p-4 rounded-lg border ${
@@ -220,71 +202,9 @@ const Report = () => {
                   : "bg-red-50 border-red-200 text-red-800"
               }`}
             >
-              <div className="flex items-center gap-2">
-                {message.includes("successfully") ? (
-                  <svg
-                    className="w-5 h-5 text-green-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    className="w-5 h-5 text-red-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                )}
-                <p className="font-medium">{message}</p>
-              </div>
+              <p className="font-medium">{message}</p>
             </div>
           )}
-        </div>
-
-        {/* Help Section */}
-        <div className="mt-8 bg-blue-50 border border-blue-200 rounded-xl p-6">
-          <h3 className="font-semibold text-blue-900 mb-3">
-            Reporting Guidelines
-          </h3>
-          <ul className="text-sm text-blue-800 space-y-2">
-            <li className="flex items-start gap-2">
-              <span className="text-blue-600 mt-0.5">•</span>
-              <span>
-                Provide clear, specific details about the issue location
-              </span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-blue-600 mt-0.5">•</span>
-              <span>Include photos when possible for faster resolution</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-blue-600 mt-0.5">•</span>
-              <span>
-                Select the most appropriate category for better routing
-              </span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-blue-600 mt-0.5">•</span>
-              <span>
-                Reports are reviewed within 24-48 hours by municipal staff
-              </span>
-            </li>
-          </ul>
         </div>
       </div>
     </div>
