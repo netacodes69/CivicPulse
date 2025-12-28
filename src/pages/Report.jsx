@@ -20,9 +20,9 @@ const Report = () => {
     if (image) formData.append("image", image);
 
     try {
-      // 🔥 LOGIC FIX — ONLY CHANGE HERE
+      // 🔥 FIXED BACKEND URL (Was localhost → now live server)
       const res = await axios.post(
-        "https://civicpulse-c85t.onrender.com/api/user/report",   // fixed endpoint
+        "https://civicpulse-c85t.onrender.com/api/user/report",
         formData,
         {
           headers: {
