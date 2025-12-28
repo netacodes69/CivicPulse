@@ -7,8 +7,9 @@ const Login = () => {
   const [form, setForm] = useState({
     username: "",
     password: "",
-    role: "user", // default role
+    role: "user", // default
   });
+
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
@@ -22,19 +23,24 @@ const Login = () => {
     setError("");
 
     try {
-      // ✅ Send role in request body
-      const res = await axios.post("/api/auth/login", form);
+      // 🔥 FIXED — using your Render backend URL
+      const res = await axios.post(
+        "https://civicpulse-c85t.onrender.com/api/auth/login",
+        form
+      );
+
       const token = res.data.token;
 
-      login(token); // store in context/localStorage
+      // store JWT
+      login(token);
 
-      // ✅ Decode JWT to decide redirect
+      // ⭐ Decode token to check role
       const decoded = JSON.parse(atob(token.split(".")[1]));
-      if (decoded.role === "admin") {
-        navigate("/all-reports");
-      } else {
-        navigate("/my-reports");
-      }
+
+      // redirect based on role
+      if (decoded.role === "admin") navigate("/all-reports");
+      else navigate("/my-reports");
+
     } catch (err) {
       const msg = err.response?.data?.message || "Login failed";
       setError(msg);
@@ -44,7 +50,7 @@ const Login = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 px-4 py-8">
       <div className="w-full max-w-md">
-        {/* Header Section */}
+
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4">
             <svg
@@ -69,18 +75,13 @@ const Login = () => {
           </p>
         </div>
 
-        {/* Login Form */}
         <form
           onSubmit={handleSubmit}
           className="bg-white p-8 rounded-xl shadow-lg border border-slate-200 space-y-6"
         >
           <div className="text-center">
-            <h2 className="text-xl font-semibold text-slate-800 mb-2">
-              Sign In
-            </h2>
-            <p className="text-slate-600 text-sm">
-              Access your civic dashboard
-            </p>
+            <h2 className="text-xl font-semibold text-slate-800 mb-2">Sign In</h2>
+            <p className="text-slate-600 text-sm">Access your civic dashboard</p>
           </div>
 
           {error && (
@@ -93,10 +94,7 @@ const Login = () => {
 
           <div className="space-y-4">
             <div>
-              <label
-                htmlFor="username"
-                className="block text-sm font-medium text-slate-700 mb-2"
-              >
+              <label htmlFor="username" className="block text-sm font-medium text-slate-700 mb-2">
                 Username
               </label>
               <input
@@ -106,16 +104,13 @@ const Login = () => {
                 placeholder="Enter your username"
                 value={form.username}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-slate-800 placeholder-slate-400"
+                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
                 required
               />
             </div>
 
             <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-slate-700 mb-2"
-              >
+              <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-2">
                 Password
               </label>
               <input
@@ -125,16 +120,13 @@ const Login = () => {
                 placeholder="Enter your password"
                 value={form.password}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-slate-800 placeholder-slate-400"
+                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
                 required
               />
             </div>
 
             <div>
-              <label
-                htmlFor="role"
-                className="block text-sm font-medium text-slate-700 mb-2"
-              >
+              <label htmlFor="role" className="block text-sm font-medium text-slate-700 mb-2">
                 Access Level
               </label>
               <select
@@ -142,7 +134,7 @@ const Login = () => {
                 name="role"
                 value={form.role}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-slate-800 bg-white"
+                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-white"
                 required
               >
                 <option value="user">Citizen User</option>
@@ -153,27 +145,18 @@ const Login = () => {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-sm"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200"
           >
             Sign In to Dashboard
           </button>
 
-          <div className="pt-4 border-t border-slate-200">
-            <p
-              className="text-sm text-center text-blue-600 hover:text-blue-700 cursor-pointer font-medium transition-colors duration-200"
-              onClick={() => navigate("/signup")}
-            >
-              Don't have an account? Create Account
-            </p>
-          </div>
+          <p className="pt-4 text-sm text-center text-blue-600 hover:text-blue-700 cursor-pointer"
+            onClick={() => navigate("/signup")}
+          >
+            Don't have an account? Create Account
+          </p>
         </form>
 
-        {/* Footer */}
-        <div className="text-center mt-6">
-          <p className="text-xs text-slate-500">
-            Secure access to municipal services and community reporting
-          </p>
-        </div>
       </div>
     </div>
   );
