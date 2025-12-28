@@ -19,17 +19,18 @@ const Signup = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post("/api/auth/signup", form);
-      alert("Signup successful! Please login.");
-      navigate("/login");
-    } catch (err) {
-      console.error("Signup failed:", err);
-      alert(err.response?.data?.message || "Signup failed. Please try again.");
-    }
-  };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    await axios.post("https://civicpulse-c85t.onrender.com/api/auth/signup", form);
+    alert("Signup successful! Please login.");
+    navigate("/login");
+  } catch (err) {
+    console.error("Signup failed:", err);
+    alert(err.response?.data?.message || "Signup failed. Please try again.");
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center px-4 py-8">
