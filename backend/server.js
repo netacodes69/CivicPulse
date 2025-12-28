@@ -13,8 +13,15 @@ const app = express();
 // ===== FIX 1: CORS Proper Setup =====
 const allowedOrigins = [
   "http://localhost:5173",
-  process.env.FRONTEND_URL   // Vercel URL will go here
+  process.env.FRONTEND_URL
 ];
+
+app.use(cors({
+  origin: allowedOrigins,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
+
 
 app.use(cors({
   origin: allowedOrigins,
