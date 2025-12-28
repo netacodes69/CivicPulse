@@ -7,23 +7,27 @@ const UserProfile = () => {
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await axios.get("http://localhost:5000/api/user/profile", {
+useEffect(() => {
+  const fetchProfile = async () => {
+    try {
+      const res = await axios.get(
+        "https://civicpulse-c85t.onrender.com/api/user/profile",  // ✔ live backend
+        {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`, // ✔ send auth token
           },
-        });
-        setProfile(res.data.user);
-      } catch (err) {
-        console.error(err);
-        setError("Failed to load profile.");
-      }
-    };
+        }
+      );
+      setProfile(res.data.user);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to load profile.");
+    }
+  };
 
-    fetchProfile();
-  }, [token]);
+  fetchProfile();
+}, [token]);
+
 
   if (error)
     return (
