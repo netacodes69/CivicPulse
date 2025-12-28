@@ -10,27 +10,40 @@ const adminRoutes = require("./routes/adminRoutes");
 
 const app = express();
 
-app.use(cors());
+// ===== FIX 1: CORS Proper Setup =====
+const allowedOrigins = [
+  "http://localhost:5173",
+  process.env.https://civicpulse.vercel.app  // Vercel URL will go here
+];
+
+app.use(cors({
+  origin: allowedOrigins,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
+
+// ===== FIX 2: JSON parser =====
 app.use(express.json());
-app.use("/uploads", express.static(path.join(__dirname, "uploads"))); // Optional
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-app.use("/api", adminRoutes);
+// ===== FIX 3: REMOVE THIS BROKEN ROUTE =====
+// ❌ app.use("/api", adminRoutes);    <--- REMOVE
 
-// Routes
+// ===== Correct Routes =====
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/admin", adminRoutes);
 
-// Optional error handler
+// ===== Error Handler =====
 app.use((err, req, res, next) => {
   console.error("Global error:", err.stack);
   res.status(500).json({ message: "Something went wrong!" });
 });
 
+// ===== DB Connection =====
 const PORT = process.env.PORT || 5000;
 
-mongoose
-  .connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log("✅ Connected to MongoDB");
     app.listen(PORT, () =>
