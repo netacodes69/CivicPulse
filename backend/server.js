@@ -17,13 +17,22 @@ const allowedOrigins = [
   "http://localhost:5173",
   "https://civic-pulse-gilt.vercel.app",
   "https://civicpulse-c85t.onrender.com",
+  "https://civic-pulse-git-main-netacodes69s-projects.vercel.app",  // ADD THIS
 ];
 
+
 app.use(cors({
-  origin: allowedOrigins,
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("CORS blocked for: " + origin));
+    }
+  },
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE"]
+  methods: ["GET", "POST", "PUT", "DELETE"],
 }));
+
 
 
 // for preflight OPTIONS
