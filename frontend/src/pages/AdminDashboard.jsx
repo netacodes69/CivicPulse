@@ -6,20 +6,23 @@ const AdminDashboard = () => {
   const { token } = useContext(AuthContext);
   const [stats, setStats] = useState(null);
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const res = await axios.get("/api/admin/dashboard-stats", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setStats(res.data); // ✅ fixed
-      } catch (err) {
-        console.error("Error fetching dashboard stats", err);
-      }
-    };
+    useEffect(() => {
+      const fetchStats = async () => {
+        try {
+          // FIX 1: Use real backend URL instead of local path
+          const res = await axios.get("https://civicpulse-c85t.onrender.com/api/admin/dashboard-stats", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
 
-    if (token) fetchStats();
-  }, [token]);
+          setStats(res.data); // <= keep as it is
+        } catch (err) {
+          console.error("Error fetching dashboard stats", err);
+        }
+      };
+
+      if (token) fetchStats();
+    }, [token]);
+
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -130,7 +133,8 @@ const AdminDashboard = () => {
                 </div>
                 <div className="mt-4">
                   <h3 className="text-3xl font-bold text-slate-800">
-                    {stats.total.toLocaleString()}
+                    {stats?.total?.toLocaleString()}
+
                   </h3>
                   <p className="text-slate-600 text-sm mt-1 font-medium">
                     Total Reports
@@ -167,7 +171,8 @@ const AdminDashboard = () => {
                 </div>
                 <div className="mt-4">
                   <h3 className="text-3xl font-bold text-red-600">
-                    {stats.pending.toLocaleString()}
+                    {stats?.total?.toLocaleString()}
+
                   </h3>
                   <p className="text-slate-600 text-sm mt-1 font-medium">
                     Pending Review
@@ -210,7 +215,8 @@ const AdminDashboard = () => {
                 </div>
                 <div className="mt-4">
                   <h3 className="text-3xl font-bold text-yellow-600">
-                    {stats.inProgress.toLocaleString()}
+                    {stats?.total?.toLocaleString()}
+
                   </h3>
                   <p className="text-slate-600 text-sm mt-1 font-medium">
                     In Progress
@@ -247,7 +253,8 @@ const AdminDashboard = () => {
                 </div>
                 <div className="mt-4">
                   <h3 className="text-3xl font-bold text-green-600">
-                    {stats.resolved.toLocaleString()}
+                    {stats?.total?.toLocaleString()}
+
                   </h3>
                   <p className="text-slate-600 text-sm mt-1 font-medium">
                     Resolved
