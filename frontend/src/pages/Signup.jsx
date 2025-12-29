@@ -21,15 +21,20 @@ const Signup = () => {
 
 const handleSubmit = async (e) => {
   e.preventDefault();
+
   try {
-    await axios.post("https://civicpulse-c85t.onrender.com/api/auth/signup", form);
+    const API = import.meta.env.VITE_API_URL || "https://civicpulse-c85t.onrender.com";
+
+    const res = await axios.post(`${API}/api/auth/signup`, form);
+
     alert("Signup successful! Please login.");
     navigate("/login");
   } catch (err) {
-    console.error("Signup failed:", err);
-    alert(err.response?.data?.message || "Signup failed. Please try again.");
+    console.error("Signup Error:", err.response?.data || err);
+    alert(err.response?.data?.message || "Signup failed.");
   }
 };
+
 
 
   return (

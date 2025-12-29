@@ -14,22 +14,17 @@ const app = express();
 // 🔥 CORS CONFIGURATION (MOST IMPORTANT)
 // ===================================================
 const allowedOrigins = [
-  "http://localhost:5173",  // Dev
-  "https://civicpulse-git-main-netacodes69s-projects.vercel.app", // Your live Vercel domain
-  "https://civicpulse-livid.vercel.app" // keep only if required
+  "http://localhost:5173",
+  "https://civic-pulse-gilt.vercel.app",
+  "https://civicpulse-c85t.onrender.com",
 ];
 
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("CORS Blocked: Not allowed origin ➤ " + origin));
-    }
-  },
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+  origin: allowedOrigins,
   credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"]
 }));
+
 
 // for preflight OPTIONS
 app.options("*", cors());
