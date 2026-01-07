@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import axios from "axios";
+import api from "../api/axios";
 import { AuthContext } from "../context/AuthContext";
 
 const UpdateReportStatus = () => {
@@ -15,8 +15,8 @@ const UpdateReportStatus = () => {
     setError("");
 
     try {
-      const res = await axios.put(
-        `http://localhost:5000/api/admin/report/${reportId}/status`,
+      const res = await api.put(
+        `/api/admin/report/${reportId}/status`,
         { status },
         {
           headers: {

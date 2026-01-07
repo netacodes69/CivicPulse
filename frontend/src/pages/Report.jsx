@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import axios from "axios";
+import api from "../api/axios";
 import { AuthContext } from "../context/AuthContext";
 
 const Report = () => {
@@ -20,24 +20,18 @@ const Report = () => {
     if (image) formData.append("image", image);
 
     try {
-      // 🔥 FIXED BACKEND URL (Was localhost → now live server)
-      const res = await axios.post(
-        "https://civicpulse-c85t.onrender.com/api/user/report",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const res = await api.post("/api/user/report", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       setMessage("Report submitted successfully!");
       setTitle("");
       setDescription("");
       setCategory("");
       setImage(null);
-
     } catch (err) {
       console.error(err);
       setMessage("Failed to submit report");
@@ -165,19 +159,27 @@ const Report = () => {
                       stroke="currentColor"
                       viewBox="0 0 24 24"
                     >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                      />
                     </svg>
                     <span className="text-slate-600 font-medium">
                       Click to upload image
                     </span>
-                    <span className="text-slate-400 text-sm">PNG/JPG up to 10MB</span>
+                    <span className="text-slate-400 text-sm">
+                      PNG/JPG up to 10MB
+                    </span>
                   </div>
                 </label>
               </div>
               {image && (
                 <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
-                  <p className="text-green-700 text-sm font-medium">✓ File: {image.name}</p>
+                  <p className="text-green-700 text-sm font-medium">
+                    ✓ File: {image.name}
+                  </p>
                 </div>
               )}
             </div>

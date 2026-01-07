@@ -1,6 +1,6 @@
 // src/pages/AllReports.jsx
 import React, { useEffect, useState, useContext } from "react";
-import axios from "axios";
+import api from "../api/axios";
 import { AuthContext } from "../context/AuthContext";
 
 const AllReports = () => {
@@ -10,7 +10,7 @@ const AllReports = () => {
 
   const fetchReports = async () => {
     try {
-      const res = await axios.get("/api/admin/reports", {
+      const res = await api.get("/api/admin/reports", {
         headers: { Authorization: `Bearer ${token}` },
         params: filterArea ? { area: filterArea } : {},
       });

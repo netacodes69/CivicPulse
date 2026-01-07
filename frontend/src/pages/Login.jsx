@@ -1,13 +1,13 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../api/axios";
 import { AuthContext } from "../context/AuthContext";
 
 const Login = () => {
   const [form, setForm] = useState({
     username: "",
     password: "",
-    role: "user", // default
+    role: "user",
   });
 
   const [error, setError] = useState("");
@@ -23,24 +23,18 @@ const Login = () => {
     setError("");
 
     try {
-      // 🔥 FIXED — using your Render backend URL
-      const res = await axios.post(
-        "https://civicpulse-c85t.onrender.com/api/auth/login",
-        form
-      );
+      const res = await api.post("/api/auth/login", form);
 
       const token = res.data.token;
 
-      // store JWT
+      // store token + decode via AuthContext
       login(token);
 
-      // ⭐ Decode token to check role
+      // decode ONLY for redirect (safe)
       const decoded = JSON.parse(atob(token.split(".")[1]));
 
-      // redirect based on role
       if (decoded.role === "admin") navigate("/all-reports");
       else navigate("/my-reports");
-
     } catch (err) {
       const msg = err.response?.data?.message || "Login failed";
       setError(msg);
@@ -50,7 +44,6 @@ const Login = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 px-4 py-8">
       <div className="w-full max-w-md">
-
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4">
             <svg
@@ -94,48 +87,42 @@ const Login = () => {
 
           <div className="space-y-4">
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-slate-700 mb-2">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
                 Username
               </label>
               <input
-                id="username"
                 type="text"
                 name="username"
-                placeholder="Enter your username"
                 value={form.username}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                className="w-full px-4 py-3 border border-slate-300 rounded-lg"
                 required
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-2">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
                 Password
               </label>
               <input
-                id="password"
                 type="password"
                 name="password"
-                placeholder="Enter your password"
                 value={form.password}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                className="w-full px-4 py-3 border border-slate-300 rounded-lg"
                 required
               />
             </div>
 
             <div>
-              <label htmlFor="role" className="block text-sm font-medium text-slate-700 mb-2">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
                 Access Level
               </label>
               <select
-                id="role"
                 name="role"
                 value={form.role}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-white"
-                required
+                className="w-full px-4 py-3 border border-slate-300 rounded-lg bg-white"
               >
                 <option value="user">Citizen User</option>
                 <option value="admin">Municipal Admin</option>
@@ -145,18 +132,18 @@ const Login = () => {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg"
           >
             Sign In to Dashboard
           </button>
 
-          <p className="pt-4 text-sm text-center text-blue-600 hover:text-blue-700 cursor-pointer"
+          <p
+            className="pt-4 text-sm text-center text-blue-600 cursor-pointer"
             onClick={() => navigate("/signup")}
           >
             Don't have an account? Create Account
           </p>
         </form>
-
       </div>
     </div>
   );

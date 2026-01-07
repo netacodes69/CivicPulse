@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import axios from "axios";
+import api from "../api/axios";
 import { AuthContext } from "../context/AuthContext";
 
 const MyReports = () => {
@@ -7,29 +7,28 @@ const MyReports = () => {
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
 
-useEffect(() => {
-  const fetchReports = async () => {
-    try {
-      const res = await axios.get(
-        "https://civicpulse-c85t.onrender.com/api/user/my-reports",  // ✔ fixed
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+  useEffect(() => {
+    if (!token) return;
 
-      console.log("Fetched reports:", res.data.reports);
-      setReports(Array.isArray(res.data.reports) ? res.data.reports : []);
-    } catch (err) {
-      console.error("Error fetching reports", err);
-      setReports([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const fetchReports = async () => {
+      try {
+        const res = await api.get("/api/user/my-reports", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-  if (token) fetchReports();
-}, [token]);
+        setReports(Array.isArray(res.data.reports) ? res.data.reports : []);
+      } catch (err) {
+        console.error("Error fetching reports", err);
+        setReports([]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    fetchReports();
+  }, [token]);
 
   const getStatusIcon = (status) => {
     switch (status) {

@@ -1,27 +1,30 @@
 import React, { useEffect, useState, useContext } from "react";
-import axios from "axios";
+import api from "../api/axios";
 import { AuthContext } from "../context/AuthContext";
 
 const AdminDashboard = () => {
   const { token } = useContext(AuthContext);
   const [stats, setStats] = useState(null);
 
-    useEffect(() => {
-      const fetchStats = async () => {
-        try {
-          // FIX 1: Use real backend URL instead of local path
-          const res = await axios.get("https://civicpulse-c85t.onrender.com/api/admin/dashboard-stats", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+useEffect(() => {
+  if (!token) return;
 
-          setStats(res.data); // <= keep as it is
-        } catch (err) {
-          console.error("Error fetching dashboard stats", err);
-        }
-      };
+  const fetchStats = async () => {
+    try {
+      const res = await api.get("/api/admin/dashboard-stats", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setStats(res.data);
+    } catch (err) {
+      console.error("Error fetching dashboard stats", err);
+    }
+  };
 
-      if (token) fetchStats();
-    }, [token]);
+  fetchStats();
+}, [token]);
+
 
 
   return (
