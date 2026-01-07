@@ -11,17 +11,17 @@ const authMiddleware = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // { id, role }
+    req.user = decoded; // { id, role, username, state, area }
     next();
   } catch (err) {
     return res.status(401).json({ message: "Invalid or expired token" });
   }
 };
 
-// Role-based middleware
+// 🔥 ROLE GUARD (NORMALIZED)
 const requireRole = (role) => {
   return (req, res, next) => {
-    if (req.user.role !== role) {
+    if (req.user.role !== role.toLowerCase()) {
       return res
         .status(403)
         .json({ message: "Access denied: Insufficient role" });

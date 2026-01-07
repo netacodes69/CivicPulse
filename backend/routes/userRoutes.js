@@ -15,7 +15,7 @@ const {
 router.get(
   "/profile",
   authMiddleware,
-  requireRole("Citizen"),
+  requireRole("citizen"),
   getUserProfile
 );
 
@@ -23,7 +23,7 @@ router.get(
 router.post(
   "/report",
   authMiddleware,
-  requireRole("Citizen"),
+  requireRole("citizen"),
   upload.single("image"),
   createReport
 );
@@ -32,7 +32,7 @@ router.post(
 router.get(
   "/my-reports",
   authMiddleware,
-  requireRole("Citizen"),
+  requireRole("citizen"),
   getMyReports
 );
 
@@ -40,7 +40,7 @@ router.get(
 router.put(
   "/report/:id",
   authMiddleware,
-  requireRole("Citizen"),
+  requireRole("citizen"),
   updateReport
 );
 
@@ -48,7 +48,7 @@ router.put(
 router.delete(
   "/report/:id",
   authMiddleware,
-  requireRole("Citizen"),
+  requireRole("citizen"),
   deleteReport
 );
 
