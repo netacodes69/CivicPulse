@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: civicpulse-backend
+    env: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
