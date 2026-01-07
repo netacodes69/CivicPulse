@@ -1,5 +1,8 @@
 const jwt = require("jsonwebtoken");
 
+// ===============================
+// 🔐 AUTH MIDDLEWARE
+// ===============================
 const authMiddleware = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
@@ -12,20 +15,41 @@ const authMiddleware = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
+
+    // 🔍 DEBUG: confirm token payload
+    console.log("✅ TOKEN DECODED:", {
+      id: decoded.id,
+      role: decoded.role,
+      username: decoded.username,
+    });
+
     next();
   } catch (err) {
     return res.status(401).json({ message: "Invalid or expired token" });
   }
 };
 
-// ✅ CASE-INSENSITIVE ROLE CHECK
+// ===============================
+// 🔒 ROLE GUARD (DEBUG ENABLED)
+// ===============================
 const requireRole = (role) => {
   return (req, res, next) => {
-    if (req.user.role.toLowerCase() !== role.toLowerCase()) {
+    // 🔍 DEBUG: role comparison
+    console.log("🔍 ROLE CHECK:", {
+      fromToken: req.user?.role,
+      required: role,
+      type: typeof req.user?.role,
+    });
+
+    if (
+      !req.user?.role ||
+      req.user.role.toLowerCase() !== role.toLowerCase()
+    ) {
       return res
         .status(403)
         .json({ message: "Access denied: Insufficient role" });
     }
+
     next();
   };
 };
