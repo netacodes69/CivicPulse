@@ -22,7 +22,6 @@ router.get(
 router.post(
   "/report",
   authMiddleware,
-  requireRole("citizen"),
   upload.single("image"),
   createReport
 );
@@ -31,7 +30,6 @@ router.post(
 router.get(
   "/my-reports",
   authMiddleware,
-  requireRole("citizen"),
   getMyReports
 );
 
@@ -39,7 +37,6 @@ router.get(
 router.put(
   "/report/:id",
   authMiddleware,
-  requireRole("citizen"),
   updateReport
 );
 
@@ -47,7 +44,6 @@ router.put(
 router.delete(
   "/report/:id",
   authMiddleware,
-  requireRole("citizen"),
   deleteReport
 );
 
