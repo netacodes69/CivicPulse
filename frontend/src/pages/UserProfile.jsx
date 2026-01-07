@@ -1,33 +1,27 @@
 import React, { useEffect, useState, useContext } from "react";
-import axios from "axios";
+import api from "../api/axios";          // ✅ import axios instance
 import { AuthContext } from "../context/AuthContext";
 
 const UserProfile = () => {
-  const { token } = useContext(AuthContext); // assuming you store token in context
+  const { token } = useContext(AuthContext);
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState("");
 
-useEffect(() => {
-  const fetchProfile = async () => {
-    try {
-      const res = await axios.get(
-        "https://civicpulse-c85t.onrender.com/api/user/profile",  // ✔ live backend
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // ✔ send auth token
-          },
-        }
-      );
-      setProfile(res.data.user);
-    } catch (err) {
-      console.error(err);
-      setError("Failed to load profile.");
-    }
-  };
+  useEffect(() => {
+    if (!token) return; // ⛔ wait for token
 
-  fetchProfile();
-}, [token]);
+    const fetchProfile = async () => {
+      try {
+        const res = await api.get("/api/user/profile");
+        setProfile(res.data.user);
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load profile.");
+      }
+    };
 
+    fetchProfile();
+  }, [token]);
 
   if (error)
     return (
