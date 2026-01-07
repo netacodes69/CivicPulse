@@ -11,31 +11,21 @@ const adminRoutes = require("./routes/adminRoutes");
 const app = express();
 
 // ===================================================
-// 🔥 CORS CONFIGURATION (MOST IMPORTANT)
+// 🔥 CORS CONFIGURATION (PRODUCTION SAFE)
 // ===================================================
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://civic-pulse-gilt.vercel.app",
-  "https://civicpulse-c85t.onrender.com",
-  "https://civic-pulse-git-main-netacodes69s-projects.vercel.app",  // ADD THIS
+  "https://civic-pulse-steel.vercel.app"
 ];
 
-
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("CORS blocked for: " + origin));
-    }
-  },
+  origin: allowedOrigins,
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 }));
 
-
-
-// for preflight OPTIONS
+// ✅ Preflight support (MANDATORY)
 app.options("*", cors());
 
 // ===================================================
@@ -51,9 +41,11 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/admin", adminRoutes);
 
-// Health check route (helpful for Render)
+// ===================================================
+// Health Check
+// ===================================================
 app.get("/", (req, res) => {
-  res.send("CivicPulse Backend Running ✔");
+  res.status(200).send("CivicPulse Backend Running 🚀");
 });
 
 // ===================================================
@@ -70,15 +62,16 @@ app.use((err, req, res, next) => {
 // ===================================================
 // MongoDB + Server Start
 // ===================================================
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 10000;
 
-mongoose.connect(process.env.MONGO_URI, {
-})
+mongoose
+  .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("📦 Connected to MongoDB");
-    app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+    app.listen(PORT, () =>
+      console.log(`🚀 Server running on port ${PORT}`)
+    );
   })
   .catch((err) => {
     console.error("❌ Failed to connect to MongoDB:", err.message);
-    process.exit(1);
   });
